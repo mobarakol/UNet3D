@@ -10,6 +10,7 @@ import torch.nn.functional as F
 from dataset_brats import dataset_brats19
 from model import UNet3D
 from utils import dice_3D, surface_dice_3D, seed_everything, worker_init_fn
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def validate(valid_loader, model, args):
     w, h = 0, args.num_classes
@@ -20,7 +21,7 @@ def validate(valid_loader, model, args):
     model.eval()
     with torch.no_grad():
         for batch_idx, (inputs, labels,_) in enumerate(valid_loader):
-            inputs = Variable(inputs).cuda()
+            inputs = Variable(inputs).to(device)
             outputs_orig = model(inputs)
             outputs = outputs_orig.data.max(1)[1].squeeze_(1).cpu().numpy()
             labels = np.array(labels.squeeze(1))
@@ -62,7 +63,7 @@ def main():
                                worker_init_fn=worker_init_fn)
     
     print('Length of dataset- valid:', dataset_valid.__len__())
-    model = UNet3D(in_channels=args.in_channels, out_channels=args.num_classes, isSoftmax=True).cuda()
+    model = UNet3D(in_channels=args.in_channels, out_channels=args.num_classes, isSoftmax=True).to(device)
     model = torch.nn.parallel.DataParallel(model)
     mode_list = ['best_oh.pth.tar', 'best_ls0.1.pth.tar', 'best_ls0.2.pth.tar', 'best_ls0.3.pth.tar', 'best_svls.pth.tar']
     for mode in mode_list:
