@@ -54,7 +54,7 @@ def main():
     parser.add_argument('--data_root', default='MICCAI_BraTS_2019_Data_Training', help='data root')
     parser.add_argument('--sd_tolerance', default=[1,2], type=int, help="Surface dice tolerance")
     parser.add_argument('--spacing_mm', default=(1,1,1), type=int, help="Surface dice spacing")
-    parser.add_argument('--ckpt_dir', default='ckpt/best_LS', help='data root')
+    parser.add_argument('--ckpt_dir', default='ckpt_brats19/', help='data root')
     args = parser.parse_args(args=[])
 
     dataset_valid = dataset_brats19(args=args, isTrain=False)
@@ -64,9 +64,9 @@ def main():
     print('Length of dataset- valid:', dataset_valid.__len__())
     model = UNet3D(in_channels=args.in_channels, out_channels=args.num_classes, isSoftmax=True).cuda()
     model = torch.nn.parallel.DataParallel(model)
-    mode_list = ['0.0','0.1' , '0.2', '0.3','_SVLS_181', 'W2']
+    mode_list = ['best_oh.pth.tar', 'best_ls0.1.pth.tar', 'best_ls0.2.pth.tar', 'best_ls0.3.pth.tar', 'best_svls.pth.tar']
     for mode in mode_list:
-        model.load_state_dict(torch.load(args.ckpt_dir + str(mode) + '.pth.tar'))
+        model.load_state_dict(torch.load(args.ckpt_dir + str(mode)))
         dice_valid, wt_dice, surface_dice, wt_sd = validate(valid_loader, model, args)
         avg_wt_sd = np.array(wt_sd).mean(axis=0)
         avg_wt_std = np.array(wt_sd).std(axis=0)
