@@ -23,9 +23,9 @@ class dataset_brats19(Dataset):
     def __init__(self, args=None, transform=None, isTrain=True):
         self.isTrain = isTrain
         if self.isTrain:
-            self.data_dir = glob(args.data_root+'/train_train/**')
+            self.data_dir = glob(os.path.join(args.data_root,'train_train/**'))
         else:
-            self.data_dir = glob(args.data_root+'/train_valid/**')
+            self.data_dir = glob(os.path.join(args.data_root,'train_valid/**'))
 
         self.args = args
 
