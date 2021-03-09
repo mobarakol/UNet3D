@@ -28,6 +28,7 @@ class dataset_brats19(Dataset):
             self.data_dir = glob(os.path.join(args.data_root,'train_valid/**'))
 
         self.args = args
+        self.data_dir.sort()
 
     def __len__(self):
         return len(self.data_dir)
