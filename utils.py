@@ -31,7 +31,7 @@ def dice_3D(im1, im2, tid):
     return dsc
 
 
-def surface_dice_3D(im1, im2, tid, args):
+def surface_dice_3D(im1, im2, tid, spacing_mm=(1,1,1), sd_tolerance = [2]):
     im1 = im1 == tid
     im2 = im2 == tid
     im1 = np.asarray(im1).astype(np.bool)
@@ -40,9 +40,9 @@ def surface_dice_3D(im1, im2, tid, args):
         raise ValueError("Shape mismatch: im1 and im2 must have the same shape.")
     # compute surface dice
     surface_dist = surface_distance.compute_surface_distances(
-        im1, im2, spacing_mm=args.spacing_mm)
+        im1, im2, spacing_mm=spacing_mm)
     sd = []
-    for tol_weight in args.sd_tolerance:
+    for tol_weight in sd_tolerance:
         if len(np.unique(im1)) == 1:
             sd_gt2pred = 0
         else:
